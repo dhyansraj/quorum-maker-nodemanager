@@ -10,7 +10,7 @@ type AppConfig struct {
 	NodeDir      string `properties:"nodeDir,default=/home/node"`
 	ContractsDir string `properties:"contractsDir,default=/home/node/contracts"`
 	GethLogs     string `properties:"gethLogs,default=/home/node/qdata/gethLogs"`
-	PrivacyLogs  string `properties:"privacyLogs,default=/home/node/qdata/constellationLogs"`
+	PrivacyLogs  string `properties:"privacyLogs,default=/home/node/qdata/tesseraLogs"`
 }
 
 var appConfig AppConfig
@@ -37,7 +37,7 @@ type SetupConf struct {
 	CurrentIp           string `properties:"CURRENT_IP,default="`
 	RpcPort             string `properties:"RPC_PORT,default="`
 	WhisperPort         string `properties:"WHISPER_PORT,default="`
-	ConstellationPort   string `properties:"CONSTELLATION_PORT,default="`
+	TesseraPort   string `properties:"TESSERA_PORT,default="`
 	RaftPort            string `properties:"RAFT_PORT,default="`
 	ThisNodemanagerPort string `properties:"THIS_NODEMANAGER_PORT,default="`
 	WsPort              string `properties:"WS_PORT,default="`

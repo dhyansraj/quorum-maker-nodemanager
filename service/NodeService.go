@@ -161,7 +161,7 @@ type CreateNetworkScriptArgs struct {
 	CurrentIP         string `json:"currentIP,omitempty"`
 	RPCPort           string `json:"rpcPort,omitempty"`
 	WhisperPort       string `json:"whisperPort,omitempty"`
-	ConstellationPort string `json:"constellationPort,omitempty"`
+	TesseraPort string `json:"tesseraPort,omitempty"`
 	RaftPort          string `json:"raftPort,omitempty"`
 	NodeManagerPort   string `json:"nodeManagerPort,omitempty"`
 }
@@ -171,7 +171,7 @@ type JoinNetworkScriptArgs struct {
 	CurrentIP             string `json:"currentIP,omitempty"`
 	RPCPort               string `json:"rpcPort,omitempty"`
 	WhisperPort           string `json:"whisperPort,omitempty"`
-	ConstellationPort     string `json:"constellationPort,omitempty"`
+	TesseraPort     string `json:"tesseraPort,omitempty"`
 	RaftPort              string `json:"raftPort,omitempty"`
 	NodeManagerPort       string `json:"nodeManagerPort,omitempty"`
 	MasterNodeManagerPort string `json:"masterNodeManagerPort,omitempty"`
@@ -284,7 +284,7 @@ func (nsi *NodeServiceImpl) getGenesis(url string) (response GetGenesisResponse)
 	genesis := string(b)
 	genesis = strings.Replace(genesis, "\n", "", -1)
 
-	response = GetGenesisResponse{env.GetSetupConf().ConstellationPort, env.GetSetupConf().NetworkId, genesis}
+	response = GetGenesisResponse{env.GetSetupConf().TesseraPort, env.GetSetupConf().NetworkId, genesis}
 	return response
 }
 
@@ -723,7 +723,7 @@ func (nsi *NodeServiceImpl) deployContract(pubKeys []string, fileName []string, 
 	return contractJsons
 }
 
-func (nsi *NodeServiceImpl) createNetworkScriptCall(nodename string, currentIP string, rpcPort string, whisperPort string, constellationPort string, raftPort string, nodeManagerPort string) SuccessResponse {
+func (nsi *NodeServiceImpl) createNetworkScriptCall(nodename string, currentIP string, rpcPort string, whisperPort string, tesseraPort string, raftPort string, nodeManagerPort string) SuccessResponse {
 	var successResponse SuccessResponse
 	cmd := exec.Command("./setup.sh", "1", nodename)
 	cmd.Dir = "./Setup"
@@ -735,7 +735,7 @@ func (nsi *NodeServiceImpl) createNetworkScriptCall(nodename string, currentIP s
 	}
 
 	var setupConf string
-	setupConf = "CURRENT_IP=" + currentIP + "\n" + "RPC_PORT=" + rpcPort + "\n" + "WHISPER_PORT=" + whisperPort + "\n" + "CONSTELLATION_PORT=" + constellationPort + "\n" + "RAFT_PORT=" + raftPort + "\n" + "NODEMANAGER_PORT=" + nodeManagerPort + "\n"
+	setupConf = "CURRENT_IP=" + currentIP + "\n" + "RPC_PORT=" + rpcPort + "\n" + "WHISPER_PORT=" + whisperPort + "\n" + "TESSERA_PORT=" + tesseraPort + "\n" + "RAFT_PORT=" + raftPort + "\n" + "NODEMANAGER_PORT=" + nodeManagerPort + "\n"
 	setupConfByte := []byte(setupConf)
 	err = ioutil.WriteFile("./Setup/"+nodename+"/setup.conf", setupConfByte, 0775)
 	if err != nil {
@@ -745,9 +745,9 @@ func (nsi *NodeServiceImpl) createNetworkScriptCall(nodename string, currentIP s
 	return successResponse
 }
 
-func (nsi *NodeServiceImpl) joinRequestResponseCall(nodename string, currentIP string, rpcPort string, whisperPort string, constellationPort string, raftPort string, nodeManagerPort string, masterNodeManagerPort string, masterIP string) SuccessResponse {
+func (nsi *NodeServiceImpl) joinRequestResponseCall(nodename string, currentIP string, rpcPort string, whisperPort string, tesseraPort string, raftPort string, nodeManagerPort string, masterNodeManagerPort string, masterIP string) SuccessResponse {
 	var successResponse SuccessResponse
-	cmd := exec.Command("./setup.sh", "2", nodename, masterIP, masterNodeManagerPort, currentIP, rpcPort, whisperPort, constellationPort, raftPort, nodeManagerPort)
+	cmd := exec.Command("./setup.sh", "2", nodename, masterIP, masterNodeManagerPort, currentIP, rpcPort, whisperPort, tesseraPort, raftPort, nodeManagerPort)
 	cmd.Dir = "./Setup"
 	var out bytes.Buffer
 	cmd.Stdout = &out
@@ -757,7 +757,7 @@ func (nsi *NodeServiceImpl) joinRequestResponseCall(nodename string, currentIP s
 	}
 
 	var setupConf string
-	setupConf = "CURRENT_IP=" + currentIP + "\n" + "RPC_PORT=" + rpcPort + "\n" + "WHISPER_PORT=" + whisperPort + "\n" + "CONSTELLATION_PORT=" + constellationPort + "\n" + "RAFT_PORT=" + raftPort + "\n" + "THIS_NODEMANAGER_PORT=" + nodeManagerPort + "\n" + "MASTER_IP=" + masterIP + "\n" + "NODEMANAGER_PORT=" + masterNodeManagerPort + "\n"
+	setupConf = "CURRENT_IP=" + currentIP + "\n" + "RPC_PORT=" + rpcPort + "\n" + "WHISPER_PORT=" + whisperPort + "\n" + "TESSERA_PORT=" + tesseraPort + "\n" + "RAFT_PORT=" + raftPort + "\n" + "THIS_NODEMANAGER_PORT=" + nodeManagerPort + "\n" + "MASTER_IP=" + masterIP + "\n" + "NODEMANAGER_PORT=" + masterNodeManagerPort + "\n"
 	setupConfByte := []byte(setupConf)
 	err = ioutil.WriteFile("./Setup/"+nodename+"/setup.conf", setupConfByte, 0775)
 	if err != nil {
@@ -1025,19 +1025,19 @@ func (nsi *NodeServiceImpl) LogRotaterGeth() {
 
 func (nsi *NodeServiceImpl) LogRotaterConst() {
 
-	command := "cat $(ls | grep log | grep _) > Constellation_$(date| sed -e 's/ /_/g')"
+	command := "cat $(ls | grep log | grep _) > Tessera_$(date| sed -e 's/ /_/g')"
 
 	command1 := "echo -en '' > $(ls | grep log | grep _)"
 
 	cmd := exec.Command("bash", "-c", command)
-	cmd.Dir = env.GetAppConfig().NodeDir + "/qdata/constellationLogs"
+	cmd.Dir = env.GetAppConfig().NodeDir + "/qdata/tesseraLogs"
 	err := cmd.Run()
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	cmd1 := exec.Command("bash", "-c", command1)
-	cmd1.Dir = env.GetAppConfig().NodeDir + "/qdata/constellationLogs"
+	cmd1.Dir = env.GetAppConfig().NodeDir + "/qdata/tesseraLogs"
 	err1 := cmd1.Run()
 	if err1 != nil {
 		fmt.Println(err)

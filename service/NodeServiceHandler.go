@@ -407,7 +407,7 @@ func (nsi *NodeServiceImpl) CreateNetworkScriptCallHandler(w http.ResponseWriter
 	var request CreateNetworkScriptArgs
 	_ = json.NewDecoder(r.Body).Decode(&request)
 	fmt.Println(request)
-	response := nsi.createNetworkScriptCall(request.Nodename, request.CurrentIP, request.RPCPort, request.WhisperPort, request.ConstellationPort, request.RaftPort, request.NodeManagerPort)
+	response := nsi.createNetworkScriptCall(request.Nodename, request.CurrentIP, request.RPCPort, request.WhisperPort, request.TesseraPort, request.RaftPort, request.NodeManagerPort)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "OPTIONS, GET, POST")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, If-Modified-Since, X-File-Name, Cache-Control")
@@ -418,7 +418,7 @@ func (nsi *NodeServiceImpl) JoinNetworkScriptCallHandler(w http.ResponseWriter, 
 	var request JoinNetworkScriptArgs
 	_ = json.NewDecoder(r.Body).Decode(&request)
 	fmt.Println(request)
-	response := nsi.joinRequestResponseCall(request.Nodename, request.CurrentIP, request.RPCPort, request.WhisperPort, request.ConstellationPort, request.RaftPort, request.NodeManagerPort, request.MasterNodeManagerPort, request.MasterIP)
+	response := nsi.joinRequestResponseCall(request.Nodename, request.CurrentIP, request.RPCPort, request.WhisperPort, request.TesseraPort, request.RaftPort, request.NodeManagerPort, request.MasterNodeManagerPort, request.MasterIP)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "OPTIONS, GET, POST")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Depth, User-Agent, X-File-Size, X-Requested-With, If-Modified-Since, X-File-Name, Cache-Control")
@@ -567,7 +567,7 @@ func (nsi *NodeServiceImpl) AttachedNodeDetailsHandler(w http.ResponseWriter, r 
 	var successResponse SuccessResponse
 	var Buf bytes.Buffer
 	gethLogsDirectory := r.FormValue("gethPath")
-	constellationLogsDirectory := r.FormValue("constellationPath")
+	TesseraLogsDirectory := r.FormValue("tesseraPath")
 
 	file, _, err := r.FormFile("genesis")
 	if err != nil {
@@ -589,7 +589,7 @@ func (nsi *NodeServiceImpl) AttachedNodeDetailsHandler(w http.ResponseWriter, r 
 	chainIdAppend := fmt.Sprint("NETWORK_ID=", jsonContent.Config.ChainId, "\n")
 	util.AppendStringToFile(env.GetAppConfig().HomeDir + "/setup.conf", chainIdAppend)
 	util.InsertStringToFile(env.GetAppConfig().HomeDir + "/start.sh", "	   -v " + gethLogsDirectory + ":" + env.GetAppConfig().GethLogs + " \\\n", 13)
-	util.InsertStringToFile(env.GetAppConfig().HomeDir + "/start.sh", "	   -v " + constellationLogsDirectory + ":" + env.GetAppConfig().PrivacyLogs + " \\\n", 13)
+	util.InsertStringToFile(env.GetAppConfig().HomeDir + "/start.sh", "	   -v " + TesseraLogsDirectory + ":" + env.GetAppConfig().PrivacyLogs + " \\\n", 13)
 
 	Buf.Reset()
 	fmt.Println("Updates have been saved. Please press Ctrl+C to exit from this container and run start.sh to apply changes")

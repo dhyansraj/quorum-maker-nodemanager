@@ -44,7 +44,7 @@ func main() {
 	ticker := time.NewTicker(86400 * time.Second)
 	go func() {
 		for range ticker.C {
-			log.Debug("Rotating log for Geth and Constellation.")
+			log.Debug("Rotating log for Geth and Tessera.")
 			nodeService.LogRotaterGeth()
 			nodeService.LogRotaterConst()
 		}
@@ -118,7 +118,7 @@ func main() {
 
 	router.PathPrefix(env.GetSetupConf().ContextPath + "/contracts").Handler(http.StripPrefix(env.GetSetupConf().ContextPath+"/contracts", http.FileServer(http.Dir(env.GetAppConfig().ContractsDir))))
 	router.PathPrefix(env.GetSetupConf().ContextPath + "/geth").Handler(http.StripPrefix(env.GetSetupConf().ContextPath+"/geth", http.FileServer(http.Dir(env.GetAppConfig().GethLogs))))
-	router.PathPrefix(env.GetSetupConf().ContextPath + "/constellation").Handler(http.StripPrefix(env.GetSetupConf().ContextPath+"/constellation", http.FileServer(http.Dir(env.GetAppConfig().PrivacyLogs))))
+	router.PathPrefix(env.GetSetupConf().ContextPath + "/tessera").Handler(http.StripPrefix(env.GetSetupConf().ContextPath+"/tessera", http.FileServer(http.Dir(env.GetAppConfig().PrivacyLogs))))
 	router.PathPrefix("/").Handler(http.StripPrefix("/", NewFileServer("NodeManagerUI")))
 
 	log.Info(fmt.Sprintf("Node Manager listening on %s...", listenPort))
